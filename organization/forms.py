@@ -14,3 +14,6 @@ class OrganizationRegistrationForm(ModelForm):
         }
 
 
+class DomainForm(forms.Form):
+    domain_name = forms.CharField(max_length= 20)
+    pk = forms.IntegerField()
