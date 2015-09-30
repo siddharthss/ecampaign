@@ -12,3 +12,4 @@ class Organization(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=13)
     password = models.CharField(max_length=100)
+    domain_name = models.CharField(max_length=15, blank=True)

@@ -9,7 +9,7 @@
         <p>Organization registration form</p>
     </center>
     <hr>
-    <form action="{% url 'org_reg_form_validate'%}" method="post">
+    <form action="" method="post">
         {%csrf_token%}
         <div>
             {{ form.organization_name.label_tag }}
