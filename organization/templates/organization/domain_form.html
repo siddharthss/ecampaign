@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>domain name</title>
+</head>
+<body>
+       <center> Organization domain
+       <hr/>
+       <br/>
+       <br/>
+       <br/>
+       <br/>
+       <form action="{% url 'domain_validation_view'%}" method="post" >
+           {%csrf_token%}
+           <label>domain name</label>
+           <br/><br/>
+           <input type="text" name="domain_name"/>
+           <br/><br/>
+           <input type="submit">
+       </form>
+       </center>
+
+</body>
+</html>
