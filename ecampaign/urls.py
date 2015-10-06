@@ -15,8 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from organization.views import DemoView
+from organization.views import LoginView
+from organization.views import DashboardView
 
 urlpatterns = [
+    url(r'^$', DemoView.as_view()),
     url(r'^organization/', include('organization.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^login/$', LoginView.as_view(), name='login_view'),
+    url(r'^dashboard/$', DashboardView.as_view(), name='dashboard_view'),
+
 ]

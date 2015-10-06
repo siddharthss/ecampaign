@@ -11,20 +11,14 @@
        <br/>
        <br/>
        <br/>
-       <form action="{% url 'domain_validation_view'%}" method="post" >
+       <form action="" method="post" >
            {%csrf_token%}
-           <input type="hidden" name="pk" value={{pk}}>
-           <label>domain name</label>
-           <br/><br/>
-           <input type="text" name="domain_name"/>
-           <br/><br/>
-
-           <!--<div>-->
-               <!--{{ form.domain_name.label_tag }}-->
-               <!--{{ form.domain_name }}-->
-               <!--{{ form.domain_name.errors }}-->
-           <!--</div>-->
-
+           <div>
+               {{ form.domain_name.label_tag }}
+               {{ form.domain_name }}
+               {{ form.domain_name.errors }}
+           </div>
+           <br>
            <input type="submit">
        </form>
        </center>
