@@ -4,14 +4,22 @@ from django.forms import ModelForm
 from .models import Organization
 
 
-class OrganizationRegistrationForm(ModelForm):
-    class Meta:
-        model = Organization
-        exclude = ["domain_name"]
-        widgets = {
-        'password': forms.PasswordInput(),
-        'phone': forms.NumberInput(),
-        }
+class OrganizationRegistrationForm(forms.Form):
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput)
+    organization_name = forms.CharField(max_length=100)
+    address = forms.CharField(max_length=200)
+    pin = forms.IntegerField()
+
+    # class Meta:
+    #     model = Organization
+    #     exclude = ["domain_name","user_fk"]
+    #     widgets = {
+    #     'password': forms.PasswordInput(),
+    #     'phone': forms.NumberInput(),
+    #     }
 
 
 class DomainForm(ModelForm):
@@ -29,22 +37,9 @@ class DomainForm(ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField()
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
-    # def clean(self):
-    #     host = self.request.META['HTTP_HOST']
-    #     arr = host.split(".")
-    #     host = arr[0]
-    #     obj = Organization.objects.filter(domain_name=host)
-    #
-    #     if obj.exists():
-    #         if obj.get().email != (self.cleaned_data.get('email') or obj.get().password != self.cleaned_data.get('password')):
-    #             raise ValidationError("invalid Email addresses Or password.")
-    #     else:
-    #         raise ValidationError("invalid Email addresses Or password.")
-    #
-    #     return self.cleaned_data
 
 
 
