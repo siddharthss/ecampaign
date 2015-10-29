@@ -7,7 +7,6 @@
 <body>
     <center>
         <p> Login form</p>
-    </center>
     <hr>
     <form action="" method="post">
         {% csrf_token %}
@@ -17,6 +16,7 @@
                 {{message}}
             {% endfor %}
         {% endif %}<br>
+
         <input type="submit" value="Login" />
     </form>
 </body>

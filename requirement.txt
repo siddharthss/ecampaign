@@ -1,0 +1,5 @@
+pip install django
+pip install mysql-python
+pip install ipdb
+pip install django-shell-plus
+pip install django-ckeditor( Steps- https://pypi.python.org/pypi/django-ckeditor/4.5.1)

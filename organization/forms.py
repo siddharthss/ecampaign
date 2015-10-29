@@ -1,8 +1,11 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
-from .models import Organization
-
+from django.forms import ModelForm, DateInput
+from .models import Organization, Lead, Campaign
+from ckeditor.fields import RichTextField
+from ckeditor.widgets import CKEditorWidget
+from django.forms.extras.widgets import SelectDateWidget
 
 class OrganizationRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=100)
@@ -12,14 +15,7 @@ class OrganizationRegistrationForm(forms.Form):
     organization_name = forms.CharField(max_length=100)
     address = forms.CharField(max_length=200)
     pin = forms.IntegerField()
-
-    # class Meta:
-    #     model = Organization
-    #     exclude = ["domain_name","user_fk"]
-    #     widgets = {
-    #     'password': forms.PasswordInput(),
-    #     'phone': forms.NumberInput(),
-    #     }
+    # username = forms.CharField(widget=CKEditorWidget())
 
 
 class DomainForm(ModelForm):
@@ -39,7 +35,21 @@ class DomainForm(ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
+    remember_me = forms.BooleanField(label='Remember Me', required=False)
 
 
+class LeadForm(ModelForm):
+    class Meta:
+        model = Lead
+        exclude = ["organization"]
 
 
+class CampaignForm(ModelForm):
+    class Meta:
+        model = Campaign
+        exclude = ["organization"]
+        widgets = {
+            'content': CKEditorWidget,
+            'start_date': SelectDateWidget,
+            'end_date': SelectDateWidget,
+        }

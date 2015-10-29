@@ -7,10 +7,18 @@
 <body>
        <center> Dashboard</center>
        <hr/>
+
+       <a href="{% url 'create_lead' %}">
+           <button>Create leads</button>
+       </a>
+
+       <a href="{% url 'create_campaign' %}">
+           <button>Create campaign</button>
+       </a>
+        <br>
        <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <input type="submit" value="logout">
        </form>
-
 </body>
 </html>

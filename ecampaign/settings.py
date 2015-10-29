@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'organization',
+    'ckeditor',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -105,3 +106,46 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#session
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+#ckeditor
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+
+STATIC_ROOT = "/home/siddharth/workspace/ecampaign/organization/static/"
+
+CKEDITOR_BASEPATH = os.path.join(STATIC_ROOT, "ckeditor/")
+
+CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': [
+            [      'Undo', 'Redo',
+              '-', 'Bold', 'Italic', 'Underline',
+              '-', 'Link', 'Unlink', 'Anchor',
+              '-', 'Format',
+              '-', 'SpellChecker', 'Scayt',
+              '-', 'Maximize',
+            ],
+            [      'HorizontalRule',
+              '-', 'Table',
+              '-', 'BulletedList', 'NumberedList',
+              '-', 'Cut','Copy','Paste','PasteText','PasteFromWord',
+              '-', 'SpecialChar',
+              '-', 'Source',
+              '-', 'About',
+            ]
+        ],
+        'width': 840,
+        'height': 300,
+        'toolbarCanCollapse': False,
+    }
+}
+
+
+
