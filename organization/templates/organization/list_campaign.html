@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+       <center> List of Campaign</center>
+       <hr/>
+
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Subject</th>
+            <th>Content</th>
+            <th>Filter</th>
+            <th>Organization</th>
+        </tr>
+        {% for campaign in object_list %}
+            <tr>
+                <td>{{ campaign.campaign_name }}</td>
+                <td>{{ campaign.start_date }}</td>
+                <td>{{ campaign.end_date}}</td>
+                <td>{{ campaign.subject}}</td>
+                <td>{{ campaign.content|safe }}</td>
+                <td>{{ campaign.filter}}</td>
+                <td>{{ campaign.organization.organization_name}}</td>
+            </tr>
+        {%endfor %}
+
+
+    </table>
+</body>
+</html>

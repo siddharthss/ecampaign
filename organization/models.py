@@ -14,7 +14,7 @@ class Organization(models.Model):
 
 
 class Lead(models.Model):
-    lead_name = models.CharField(max_length=100, unique=True)
+    lead_name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     pin = models.IntegerField()
     email = models.EmailField()
@@ -23,7 +23,7 @@ class Lead(models.Model):
 
 
 class Campaign(models.Model):
-    campaign_name = models.CharField(max_length=100, unique=True)
+    campaign_name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
     subject = models.CharField(max_length=100)

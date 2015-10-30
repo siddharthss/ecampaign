@@ -16,6 +16,13 @@
            <button>Create campaign</button>
        </a>
         <br>
+       <a href="{% url 'list_lead' %}">
+           <button>List leads</button>
+       </a>
+       <a href="{% url 'list_campaign' %}">
+           <button>List campaign</button>
+       </a>
+
        <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <input type="submit" value="logout">

@@ -1,8 +1,8 @@
 from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.views.generic import View
 from django.views.generic import CreateView
 from django.views.generic.edit import UpdateView
@@ -69,7 +69,8 @@ class LoginView(FormView):
         host = self.request.META['HTTP_HOST']
         arr = host.split(".")
         host = arr[0]
-        obj = Organization.objects.get(domain_name=host)
+        # obj = Organization.objects.get(domain_name=host)
+        obj = get_object_or_404(Organization, domain_name=host)
 
         username = self.request.POST['username']
         password = self.request.POST['password']
@@ -158,3 +159,29 @@ class CreateCampaignView(CreateView):
         return super(CreateCampaignView, self).dispatch(*args, **kwargs)
 
 
+class ListLeadView(ListView):
+    model = Lead
+    template_name = 'organization/list_lead.html'
+
+    def get_queryset(self):
+        organization = Organization.objects.get(user=self.request.user)
+        queryset = Lead.objects.filter(organization=organization)
+        return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ListLeadView, self).dispatch(*args, **kwargs)
+
+
+class ListCampaignView(ListView):
+    model = Campaign
+    template_name = 'organization/list_campaign.html'
+
+    def get_queryset(self):
+        organization = Organization.objects.get(user=self.request.user)
+        queryset = Campaign.objects.filter(organization=organization)
+        return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ListCampaignView, self).dispatch(*args, **kwargs)
