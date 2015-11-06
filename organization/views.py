@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
@@ -76,7 +77,6 @@ class LoginView(FormView):
         password = self.request.POST['password']
         user = authenticate(username=username, password=password)
 
-
         if user == obj.user:
             if user is not None:
                 if user.is_active:
@@ -84,6 +84,8 @@ class LoginView(FormView):
                     remember_me = self.request.POST.get('remember_me')
                     if remember_me == "on":
                         settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+                    else:
+                        settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
                     return super(LoginView, self).form_valid(form)
                 else:
                     return self.form_invalid(form)
@@ -109,7 +111,7 @@ class DashboardView(TemplateView):
 
 class LogoutView(View):
 
-    def post(self, request):
+    def get(self, request):
         logout(request)
         return redirect('login_view')
 
@@ -185,3 +187,43 @@ class ListCampaignView(ListView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ListCampaignView, self).dispatch(*args, **kwargs)
+
+
+class SendCampaignListView(ListView):
+    model = Campaign
+    template_name = 'organization/send_campaign.html'
+
+    def get_queryset(self):
+        organization = Organization.objects.get(user=self.request.user)
+        queryset = Campaign.objects.filter(organization=organization)
+        return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(SendCampaignListView, self).dispatch(*args, **kwargs)
+
+
+class SendListLeadView(ListView):
+    model = Lead
+    template_name = 'organization/send_list_lead.html'
+
+    def get_queryset(self):
+        organization = Organization.objects.get(user=self.request.user)
+        queryset = Lead.objects.filter(organization=organization)
+        return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(SendListLeadView, self).dispatch(*args, **kwargs)
+
+
+class SendCampaignView(View):
+
+    def post(self, request):
+        lead = request.POST.getlist('lead')
+        queryset = Lead.objects.filter(pk__in=lead)
+        # import ipdb;ipdb.set_trace()
+        messages.success(request, 'campaign is successfully send to leads')
+        return redirect('send_list_lead')
+        # return HttpResponse(lead)
+        # return render(request, '', {"lead": lead})

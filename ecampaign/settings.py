@@ -141,7 +141,7 @@ CKEDITOR_CONFIGS = {
               '-', 'About',
             ]
         ],
-        'width': 840,
+        'width': 750,
         'height': 300,
         'toolbarCanCollapse': False,
     }

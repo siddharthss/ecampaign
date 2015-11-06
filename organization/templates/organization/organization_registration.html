@@ -6,22 +6,30 @@
 </head>
 <body>
     <center>
-        <p>Organization registration form</p>
+        <h2>eCampaign</h2>
     </center>
     <hr>
-    <form action="" method="post">
-        {%csrf_token%}
-        {{ form.media }}
-        {% for field in form %}
-            <div class="fieldWrapper">
-                {{ field.errors }}
-                {{ field.label_tag }} {{ field }}
-            </div>
-        {% endfor %}
-        {{ form.non_field_errors }}
-        <input type="submit" name="submit" value="submit">
-        <input type="reset">
-    </form>
+    <div align="center">
+        <form action="" method="post">
+            {%csrf_token%}
+            {{ form.media }}
+            <table>
+                    {% for field in form %}
+                        <div class="fieldWrapper">
+                            <tr>
+                                <td>{{ field.label_tag }}</td>
+                                <td>{{ field }}</td>
+                                <td>{{ field.errors }}</td>
+                            </tr>
+                        </div>
+                    {% endfor %}
+            </table>
+            {{ form.non_field_errors }}
+            <br><br>
+            <input type="submit" name="submit" value="Register">
+            <input type="reset">
+        </form>
+    </div>
 
 </body>
 </html>

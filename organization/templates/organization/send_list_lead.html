@@ -1,0 +1,130 @@
+{% extends "organization/base.html" %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+<style>
+#nav {
+    line-height:30px;
+    border-right: 2px solid black;
+    height:300px;
+    width:150px;
+    float:left;
+}
+</style>
+</head>
+<body>
+       {% block nav %}
+          <ul class="nav navbar-nav navbar-right">
+            <li><a>Welcome,{{user.first_name}}</a></li>
+            <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></li>
+          </ul>
+       {% endblock %}
+       {% block content %}
+        <div class="col-md-2" style="margin:10px 20px">
+            <ul class="nav nav-pills  nav-stacked">
+              <li role="presentation" class="active"><a href="{% url 'list_lead' %}">Leads</a></li>
+              <li role="presentation"><a href="{% url 'list_campaign' %}">Campaign</a></li>
+              <li role="presentation"><a href="{% url 'send_campaign' %}">Send campaign</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9" style="margin:10px ">
+            <div class="panel panel-default">
+              <div class="panel-heading">List of Leads</div>
+                  <div class="panel-body">
+                    <form action="{% url 'send' %}" method="post">
+                        {% csrf_token %}
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Name</th>
+                                <th>Pin</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                            {% for lead in object_list %}
+                                <tr>
+                                    <td>{{ lead.lead_name }}</td>
+                                    <td>{{ lead.pin}}</td>
+                                    <td>{{ lead.email}}</td>
+                                    <td>
+                                        <input type="checkbox" name="lead" value="{{lead.id}}">
+                                    </td>
+                                </tr>
+                            {%endfor %}
+                        </table>
+                        <div class="col-lg-5 " style="margin:0px 730px">
+                            <input type="submit" value="send">
+                        </div>
+                    </form>
+                 </div>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                    <div class="alert alert-success col-lg-5 fade in " style="margin:0px 400px" role="alert" >
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+       {%endblock%}
+        <div>
+            <h4 align="right">Welcome,{{user.first_name}}</h4>
+            <h2>eCampaign</h2>
+            <div align="right">
+            <form action="{% url 'logout' %}" method="post" >
+                {% csrf_token %}
+                <input type="submit" value="Signout">
+            </form>
+            </div>
+            <hr >
+        </div>
+
+        <div id="nav">
+           <a href="{% url 'list_lead' %}">Leads</a>
+           <br>
+           <a href="{% url 'list_campaign' %}">Campaign</a>
+           <br>
+           <a href="{% url 'send_campaign' %}">Send campaign</a>
+        </div>
+
+        <center><h4>List of Leads</h4>
+
+        <form action="{% url 'send' %}" method="post">
+            {% csrf_token %}
+
+            <table border="1">
+                <tr>
+                    <th>Name</th>
+                    <th>Pin</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                </tr>
+                {% for lead in object_list %}
+                    <tr>
+                        <td>{{ lead.lead_name }}</td>
+                        <td>{{ lead.pin}}</td>
+                        <td>{{ lead.email}}</td>
+                        <td>
+                            <input type="checkbox" name="lead" value="{{lead.id}}">
+                        </td>
+                    </tr>
+                {%endfor %}
+            </table>
+            <br>
+            <input type="submit" value="send">
+        </form>
+
+        {% if messages %}
+            {% for message in messages %}
+                    {{ message }}
+            {% endfor %}
+        {% endif %}
+
+        </center>
+</body>
+</html>
