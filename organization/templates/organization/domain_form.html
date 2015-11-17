@@ -1,3 +1,5 @@
+{% extends "organization/base.html" %}
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -5,24 +7,25 @@
     <title>domain name</title>
 </head>
 <body>
-       <center>
-           <h2>eCampaign</h2>
-       <hr/>
-       <br/>
-       <br/>
-       <br/>
-       <br/>
-       <form action="" method="post" >
-           {%csrf_token%}
-           <div>
-               {{ form.domain_name.label_tag }}
-               {{ form.domain_name }}
-               {{ form.domain_name.errors }}
-           </div>
-           <br>
-           <input type="submit" value="Register Domain">
-       </form>
-       </center>
-
-</body>
-</html>
+        {% block content%}
+        <div class="container" style="margin:50px 350px ">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title"><strong>Domain Registration </strong></h3></div>
+                        <div class="panel-body">
+                            <form  class="form-horizontal" action=" " method="post">
+                               {%csrf_token%}
+                                <div class="form-group">
+                                    <label name={{form.domain_name.name}} class="col-md-4 control-label">Domain Name</label>
+                                    <div class="col-md-8">
+                                        <input type="text" name={{form.domain_name.name}} class="form-control" placeholder="Domain Name">
+                                        {{form.dmain_name.errors}}
+                                        </div>
+                                </div>
+                                <input class="btn btn-default"type="submit" value="Register Domain">
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {%endblock%}

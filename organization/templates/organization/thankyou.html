@@ -1,3 +1,5 @@
+{% extends "organization/base.html" %}
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -5,13 +7,17 @@
     <title></title>
 </head>
 <body>
-    <center>
-        <p>
-        <h4>Thank you for registering with Us!<br/></h4>
-        Soon you will be able to access the application at this URL:
-                <a href="http://{{domain_name}}.ecampaign.com">http://{{domain_name}}.ecampaign.com</a>
-        </p>
-    </center>
+    {%block menu%}
+    {%endblock%}
+    {% block content%}
+        <center>
+            <p>
+            <h2>Thank you for registering with Us!<br/></h2>
+            <h4>Soon you will be able to access the application at this URL:
+                    <a href="http://{{domain_name}}.ecampaign.com">http://{{domain_name}}.ecampaign.com</a></h4>
+            </p>
+        </center>
+    {% endblock %}
 
 </body>
 </html>

@@ -74,3 +74,16 @@ class CampaignForm(ModelForm):
             'start_date': SelectDateWidget,
             'end_date': SelectDateWidget,
         }
+
+
+class SendListLeadForm(forms.Form):
+    lead = forms.ChoiceField()
+
+    def clean_lead(self):
+        lead = self.cleaned_data.getlist("lead")
+        import ipdb;ipdb.set_trace()
+        if not lead:
+                raise forms.ValidationError(
+                    "please select any of the leads"
+                )
+

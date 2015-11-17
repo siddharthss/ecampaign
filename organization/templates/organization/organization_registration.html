@@ -1,3 +1,4 @@
+{% extends "organization/base.html" %}
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -5,31 +6,100 @@
     <title></title>
 </head>
 <body>
-    <center>
-        <h2>eCampaign</h2>
-    </center>
-    <hr>
-    <div align="center">
-        <form action="" method="post">
-            {%csrf_token%}
-            {{ form.media }}
-            <table>
-                    {% for field in form %}
-                        <div class="fieldWrapper">
-                            <tr>
-                                <td>{{ field.label_tag }}</td>
-                                <td>{{ field }}</td>
-                                <td>{{ field.errors }}</td>
-                            </tr>
-                        </div>
-                    {% endfor %}
-            </table>
-            {{ form.non_field_errors }}
-            <br><br>
-            <input type="submit" name="submit" value="Register">
-            <input type="reset">
-        </form>
-    </div>
+    {%block menu%}
+    {%endblock%}
+    {% block content %}
+
+        <div class="container" style="margin:50px 350px ">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><strong>Registration </strong></h3></div>
+                    <div class="panel-body">
+                        <form  class="form-horizontal" action=" " method="post">
+                            {%csrf_token%}
+
+                            <div class="form-group">
+                                <label name={{form.organization_name.name}} class="col-md-4 control-label">Organization Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" name={{form.organization_name.name}} class="form-control" placeholder="Organization Name">
+                                    {{form.organization_name.errors}}
+                                    </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label name={{form.address.name}} class="col-md-4 control-label">Address</label>
+                                <div class="col-md-8">
+                                    <input type="text" name={{form.address.name}} class="form-control" placeholder="Address">
+                                    {{form.address.errors}}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label name={{form.pin.name}} class="col-md-4 control-label">Pin</label>
+                                <div class="col-md-8">
+                                    <input type="number" name={{form.pin.name}} class="form-control" placeholder="Pin">
+                                    {{form.pin.errors}}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label name={{form.first_name.name}} class="col-md-4 control-label">First Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" name={{form.first_name.name}} class="form-control" placeholder="First Name">
+                                    {{form.first_name.errors}}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label name={{form.last_name.name}} class="col-md-4 control-label">Last Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" name={{form.last_name.name}} class="form-control" placeholder="Last Name">
+                                    {{form.last_name.errors}}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label name={{form.email.name}} class="col-md-4 control-label">Email</label>
+                                <div class="col-md-8">
+                                    <input type="email" name={{form.email.name}} class="form-control" placeholder="Email">
+                                    {{form.email.errors}}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label name={{form.password.name}} class="col-md-4 control-label">Password</label>
+                                <div class="col-md-8">
+                                    <input type="password" name={{form.password.name}} class="form-control" placeholder="password">
+                                    {{form.password.errors}}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label name={{form.confirm_password.name}} class="col-md-4 control-label">Confirm Password</label>
+                                <div class="col-md-8">
+                                    <input type="password" name={{form.confirm_password.name}} class="form-control" placeholder="Confirm password">
+                                    {{form.confirm_password.errors}}
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-default">Sign in</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ form.non_field_errors }}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning" role="alert">{{message}}</div>
+            {% endfor %}
+            <br>
+        {% endif %}<br>
+
+    {% endblock content %}
+
 
 </body>
 </html>

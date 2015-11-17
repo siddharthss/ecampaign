@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
@@ -14,11 +14,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib import messages
-from .forms import OrganizationRegistrationForm, LeadForm, CampaignForm
+from .forms import OrganizationRegistrationForm, LeadForm, CampaignForm, SendListLeadForm
 from .forms import DomainForm
 from .forms import LoginForm
 from .models import Organization, Lead, Campaign
-
+from django.views.generic.edit import BaseFormView
 
 class OrganizationRegistrationView(FormView):
     template_name = "organization/organization_registration.html"
@@ -70,7 +70,6 @@ class LoginView(FormView):
         host = self.request.META['HTTP_HOST']
         arr = host.split(".")
         host = arr[0]
-        # obj = Organization.objects.get(domain_name=host)
         obj = get_object_or_404(Organization, domain_name=host)
 
         username = self.request.POST['username']
@@ -217,13 +216,24 @@ class SendListLeadView(ListView):
         return super(SendListLeadView, self).dispatch(*args, **kwargs)
 
 
-class SendCampaignView(View):
-
+class SendCampaignView(BaseFormView):
     def post(self, request):
         lead = request.POST.getlist('lead')
         queryset = Lead.objects.filter(pk__in=lead)
-        # import ipdb;ipdb.set_trace()
         messages.success(request, 'campaign is successfully send to leads')
         return redirect('send_list_lead')
-        # return HttpResponse(lead)
-        # return render(request, '', {"lead": lead})
+
+    # form_class = SendListLeadForm
+    #
+    # def form_invalid(self, form):
+    #     return HttpResponseRedirect(self.get_success_url())
+    #
+    # def form_valid(self, form):
+    #     messages.success(self.request, 'campaign is successfully send to leads')
+    #     return HttpResponseRedirect(self.get_success_url())
+    #
+    # def get_success_url(self):
+    #     return reverse('send_list_lead')
+    #
+    #     # return reverse('dashboard_view')
+

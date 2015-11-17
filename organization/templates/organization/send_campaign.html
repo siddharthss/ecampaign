@@ -23,13 +23,6 @@
        {% endblock %}
 
        {% block content %}
-        <div class="col-md-2" style="margin:10px 20px">
-            <ul class="nav nav-pills  nav-stacked">
-              <li role="presentation" class="active"><a href="{% url 'list_lead' %}">Leads</a></li>
-              <li role="presentation"><a href="{% url 'list_campaign' %}">Campaign</a></li>
-              <li role="presentation"><a href="{% url 'send_campaign' %}">Send campaign</a></li>
-            </ul>
-        </div>
 
         <div class="col-sm-9" style="margin:10px ">
             <div class="panel panel-default">
@@ -56,7 +49,7 @@
                             <td>{{ campaign.filter}}</td>
                             <td>
                                 <a href="{% url 'send_list_lead' %}">
-                                    <button>Send</button>
+                                    <button class="btn btn-default">Send</button>
                                 </a>
                             </td>
                         </tr>
@@ -67,54 +60,6 @@
 
 
        {%endblock%}
-    <div>
-            <h4 align="right">Welcome,{{user.first_name}}</h4>
-            <h2>eCampaign</h2>
-            <div align="right">
-            <form action="{% url 'logout' %}" method="post" >
-                {% csrf_token %}
-                <input type="submit" value="Signout">
-            </form>
-            </div>
-            <hr >
-    </div>
 
-    <div id="nav">
-           <a href="{% url 'list_lead' %}">Leads</a>
-           <br>
-           <a href="{% url 'list_campaign' %}">Campaign</a>
-           <br>
-           <a href="{% url 'send_campaign' %}">Send campaign</a>
-    </div>
-
-    <center><h4>Send Campaign</h4>
-
-    <table border="1">
-        <tr>
-            <th>Name</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Subject</th>
-            <th>Content</th>
-            <th>Filter</th>
-            <th></th>
-        </tr>
-        {% for campaign in object_list %}
-            <tr>
-                <td>{{ campaign.campaign_name }}</td>
-                <td>{{ campaign.start_date }}</td>
-                <td>{{ campaign.end_date}}</td>
-                <td>{{ campaign.subject}}</td>
-                <td>{{ campaign.content|safe }}</td>
-                <td>{{ campaign.filter}}</td>
-                <td>
-                    <a href="{% url 'send_list_lead' %}">
-                        <button>Send</button>
-                    </a>
-                </td>
-            </tr>
-        {%endfor %}
-    </table>
-    </center>
 </body>
 </html>
