@@ -1,0 +1,35 @@
+{% extends "organization/base.html" %}
+       {% block nav %}
+          <ul class="nav navbar-nav navbar-right">
+            <li><a>Welcome,{{user.first_name}}</a></li>
+            <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></li>
+          </ul>
+       {% endblock %}
+
+
+       {% block content %}
+
+        <div class="col-sm-9" style="margin:10px ">
+            <div class="panel panel-default">
+              <div class="panel-heading">Schedule Log</div>
+              <div class="panel-body">
+             </div>
+              <table class="table table-striped" style="padding:5px">
+                    <tr>
+                        <th>Campaign</th>
+                        <th>Lead</th>
+                        <th>Send Date and Time</th>
+                    </tr>
+                    {% for log in object_list %}
+                        <tr>
+                            <td>{{ log.campaign.campaign_name }}</td>
+                            <td>{{ log.lead.lead_name  }}</td>
+                            <td>{{ log.send_at  }}</td>
+                        </tr>
+                    {%endfor %}
+              </table>
+            </div>
+        </div>
+
+
+       {% endblock%}

@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import djcelery
+
+djcelery.setup_loader()
+BROKER_URL = 'django://'
+
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,6 +45,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'organization',
     'ckeditor',
+    'schedule',
+    'djangobower',
+    'djcelery',
+    'kombu.transport.django',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "django.core.context_processors.request",
             ],
         },
     },
@@ -93,13 +104,13 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -107,9 +118,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#session
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+
+#session(remember me)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 #ckeditor
 CKEDITOR_UPLOAD_PATH = 'uploads/'
@@ -146,6 +158,30 @@ CKEDITOR_CONFIGS = {
         'toolbarCanCollapse': False,
     }
 }
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "djangobower.finders.BowerFinder",
+)
 
+BOWER_COMPONENTS_ROOT = '/home/siddharth/workspace/ecampaign/organization/static/bower_components'
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'bootstrap'
+)
 
+# EMAIL Server config
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'email'
+EMAIL_HOST_PASSWORD = 'pwd'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'noreply@vertisinfotech.com'
+
+#djcelery backend
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend',
+CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+CELERY_TIMEZONE = 'Asia/Kolkata'
+
+TIME_ZONE = 'Asia/Kolkata'
 

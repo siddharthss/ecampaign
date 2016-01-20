@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from organization.views import OrganizationRegistrationView, CreateLeadView, CreateCampaignView, ListLeadView, \
-    ListCampaignView, SendCampaignListView, SendListLeadView, SendCampaignView
+    ListCampaignView, SendCampaignListView, SendListLeadView, SendCampaignView, ScheduleLogView
 from organization.views import DomainFormValidationView
 from organization.views import ThankYouView
 from organization.views import LogoutView
@@ -15,8 +15,10 @@ urlpatterns = [
     url(r'^list_lead', ListLeadView.as_view(), name='list_lead'),
     url(r'^list_campaign', ListCampaignView.as_view(), name='list_campaign'),
     url(r'^send_campaign', SendCampaignListView.as_view(), name='send_campaign'),
+    url(r'^send_list_lead/(\d+)/$', SendListLeadView.as_view(), name='send_list_lead'),
     url(r'^send_list_lead', SendListLeadView.as_view(), name='send_list_lead'),
     url(r'^send', SendCampaignView.as_view(), name='send'),
+    url(r'^schedule_log', ScheduleLogView.as_view(), name='schedule_log'),
 ]
 
 

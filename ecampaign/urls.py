@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/$', LoginView.as_view(), name='login_view'),
     url(r'^dashboard/$', DashboardView.as_view(), name='dashboard_view'),
+    url(r'^schedule/', include('schedule.urls')),
 ]

@@ -31,3 +31,9 @@ class Campaign(models.Model):
     filter = models.CharField(max_length=100)
     organization = models.ForeignKey(Organization)
 
+
+class ScheduleLog(models.Model):
+    campaign = models.ForeignKey(Campaign)
+    lead = models.ForeignKey(Lead)
+    send_at = models.DateTimeField()
+

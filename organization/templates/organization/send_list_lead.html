@@ -1,6 +1,6 @@
 {% extends "organization/base.html" %}
 
-<!DOCTYPE html>
+
 <html>
 <head lang="en">
     <meta charset="UTF-8">
@@ -31,6 +31,7 @@
                   <div class="panel-body">
                     <form action="{% url 'send' %}" method="post">
                         {% csrf_token %}
+                        <input type="hidden" name="campaign_id" value="{{campaign_id}}" >
                         <table class="table table-striped">
                             <tr>
                                 <th>Name</th>
@@ -44,9 +45,10 @@
                                     <td>{{ lead.pin}}</td>
                                     <td>{{ lead.email}}</td>
                                     <td>
-                                        <input type="checkbox" name="lead" value="{{lead.id}}">
+                                        <input type="checkbox" name="lead" value="{{lead.id}}">{{form.lead.errors}}
                                     </td>
                                 </tr>
+
                             {%endfor %}
                         </table>
                         <div class="col-lg-5 " style="margin:0px 730px">
@@ -60,9 +62,17 @@
 
         {% if messages %}
             {% for message in messages %}
+                {% if message.tags == 'success' %}
                     <div class="alert alert-success col-lg-5 fade in " style="margin:0px 400px" role="alert" >
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                         {{ message }}</div>
+                {% endif %}
+                {% if message.tags == 'error' %}
+                    <div class="alert alert-danger col-lg-5 fade in " style="margin:0px 400px" role="alert" >
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ message }}</div>
+                {% endif %}
+
             {% endfor %}
         {% endif %}
 

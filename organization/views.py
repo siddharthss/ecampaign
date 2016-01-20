@@ -1,5 +1,10 @@
+from datetime import timedelta, datetime
+import json
+import uuid
+from celery.schedules import crontab_parser
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.mail import EmailMessage, send_mail
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
@@ -14,13 +19,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib import messages
+from djcelery.schedulers import ModelEntry
 from .forms import OrganizationRegistrationForm, LeadForm, CampaignForm, SendListLeadForm
 from .forms import DomainForm
 from .forms import LoginForm
-from .models import Organization, Lead, Campaign
-from django.views.generic.edit import BaseFormView
+import organization
+from organization.models import Organization, Lead, Campaign, ScheduleLog
+from organization.tasks import send_onetime_mail
+
+import dateutil.parser
+from djcelery.models import PeriodicTask, IntervalSchedule, CrontabSchedule
+
 
 class OrganizationRegistrationView(FormView):
+    """for organization reg."""
     template_name = "organization/organization_registration.html"
     form_class = OrganizationRegistrationForm
 
@@ -71,9 +83,8 @@ class LoginView(FormView):
         arr = host.split(".")
         host = arr[0]
         obj = get_object_or_404(Organization, domain_name=host)
-
         username = self.request.POST['username']
-        password = self.request.POST['password']
+        password = self.request.POST['password'] 
         user = authenticate(username=username, password=password)
 
         if user == obj.user:
@@ -150,7 +161,50 @@ class CreateCampaignView(CreateView):
 
     def form_valid(self, form):
         form.instance.organization = Organization.objects.get(user=self.request.user)
-        return super(CreateCampaignView, self).form_valid(form)
+        schedule_type = self.request.POST["schedule_type"]
+        schedule_date = self.request.POST["schedule_date"]
+        schedule_time = self.request.POST["schedule_time"]
+
+        cron_minute = crontab_parser(60).parse(self.request.POST["minute"])
+        cron_hour = crontab_parser(24).parse(self.request.POST["hour"])
+        day_of_week = crontab_parser(7).parse(self.request.POST["day_of_week"])
+        day_of_month = crontab_parser(31, 1).parse(self.request.POST["day_of_month"])
+        month_of_year = crontab_parser(12, 1).parse(self.request.POST["month_of_year"])
+
+        expire_date = self.request.POST["end_date"]
+        name = self.request.POST['campaign_name']
+        subject = self.request.POST['subject']
+        content = self.request.POST['content']
+        filter = self.request.POST['filter']
+        org = form.instance.organization
+        orgpk = form.instance.organization.pk
+
+        self.object = form.save()
+
+        if schedule_type == "Onetime":
+            dt = schedule_date+schedule_time+':00'
+            date_iso = datetime.strptime(dt, '%Y-%m-%d%H:%M:%S')
+            date_iso = date_iso.isoformat()
+            date_object = datetime.strptime(date_iso, '%Y-%m-%dT%H:%M:%S')
+            send_onetime_mail.apply_async((self.object, org), eta=date_object)
+        elif schedule_type == "Repetitive":
+
+            cron = CrontabSchedule.objects.create(minute=cron_minute, hour=cron_hour,day_of_week=day_of_week,
+                                                  day_of_month=day_of_month, month_of_year=month_of_year,)
+
+            pargs = json.dumps([name,subject,content, orgpk])
+            periodic_task = PeriodicTask.objects.create(name=uuid.uuid4(),
+                                                        task="organization.tasks.send_repetitive_mail",
+                                                        crontab=cron, args=pargs)
+
+            # cron = CrontabSchedule.objects.create()
+            # pargs = json.dumps(["Test Mail 3", "Throgh app"])
+            # periodic_task = PeriodicTask.objects.create(name="Run Campaign",
+            #                                             task="organization.tasks.send_repetitive_mail",
+            #                                             crontab=cron, args=pargs)
+
+        # return super(CreateCampaignView, self).form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('dashboard_view')
@@ -207,33 +261,47 @@ class SendListLeadView(ListView):
     template_name = 'organization/send_list_lead.html'
 
     def get_queryset(self):
-        organization = Organization.objects.get(user=self.request.user)
-        queryset = Lead.objects.filter(organization=organization)
+        org=Organization.objects.get(user=self.request.user)
+        queryset = Lead.objects.filter(organization=org)
         return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(SendListLeadView, self).get_context_data(**kwargs)
+        context['campaign_id'] = self.args[0]
+        return context
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(SendListLeadView, self).dispatch(*args, **kwargs)
 
 
-class SendCampaignView(BaseFormView):
+class SendCampaignView(View):
+
     def post(self, request):
-        lead = request.POST.getlist('lead')
-        queryset = Lead.objects.filter(pk__in=lead)
-        messages.success(request, 'campaign is successfully send to leads')
-        return redirect('send_list_lead')
+        campaign_id = request.POST['campaign_id']
+        form = SendListLeadForm(request.POST, request=request)
+        if form.is_valid():
+            lead = request.POST.getlist('lead')
+            queryset = Lead.objects.filter(pk__in=lead)
+            campaign_object = Campaign.objects.get(id=campaign_id)
+            content = campaign_object.content
+            for obj in queryset:
+                msg = EmailMessage('Test mail', content, 'noreply@vertisinfotech.com', [obj.email])
+                msg.content_subtype = "html"
+                msg.send()
+                time = datetime.now()
+                log = ScheduleLog.objects.create(campaign=campaign_object, lead=obj, send_at=time)
+                log.save()
+            messages.success(request, 'campaign is successfully send to leads')
+        else:
+            messages.error(request, 'Please select leads ')
+        return redirect('send_list_lead', campaign_id)
 
-    # form_class = SendListLeadForm
-    #
-    # def form_invalid(self, form):
-    #     return HttpResponseRedirect(self.get_success_url())
-    #
-    # def form_valid(self, form):
-    #     messages.success(self.request, 'campaign is successfully send to leads')
-    #     return HttpResponseRedirect(self.get_success_url())
-    #
-    # def get_success_url(self):
-    #     return reverse('send_list_lead')
-    #
-    #     # return reverse('dashboard_view')
 
+class ScheduleLogView(ListView):
+    model = ScheduleLog
+    template_name = 'organization/schedule_log.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ScheduleLogView, self).dispatch(*args, **kwargs)

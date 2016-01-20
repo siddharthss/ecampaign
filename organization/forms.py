@@ -1,10 +1,9 @@
+from collections import OrderedDict
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm, DateInput
+from django.forms import ModelForm
 from .models import Organization, Lead, Campaign
-from ckeditor.fields import RichTextField
 from ckeditor.widgets import CKEditorWidget
 from django.forms.extras.widgets import SelectDateWidget
 
@@ -77,13 +76,18 @@ class CampaignForm(ModelForm):
 
 
 class SendListLeadForm(forms.Form):
-    lead = forms.ChoiceField()
 
-    def clean_lead(self):
-        lead = self.cleaned_data.getlist("lead")
-        import ipdb;ipdb.set_trace()
-        if not lead:
-                raise forms.ValidationError(
-                    "please select any of the leads"
-                )
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(SendListLeadForm, self).__init__(*args, **kwargs)
+        self.fields = OrderedDict([('lead', forms.ModelMultipleChoiceField(
+            queryset=Lead.objects.filter(organization=Organization.objects.get(user=request.user)),
+            widget=forms.CheckboxSelectMultiple,
+        )),])
+
+
+# class ScheduleForm(ModelForm):
+#     class Meta:
+#         model = Schedule
+#         exclude = [""]
 

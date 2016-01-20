@@ -48,7 +48,7 @@
                             <td>{{ campaign.content|safe }}</td>
                             <td>{{ campaign.filter}}</td>
                             <td>
-                                <a href="{% url 'send_list_lead' %}">
+                                <a href="{% url 'send_list_lead' campaign.id %}">
                                     <button class="btn btn-default">Send</button>
                                 </a>
                             </td>

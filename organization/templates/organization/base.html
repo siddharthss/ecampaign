@@ -58,10 +58,15 @@
             <ul class="nav nav-pills  nav-stacked">
               {% url 'list_lead' as list_lead %}
               <li role="presentation" {% if request.path == list_lead %} class="active"{% endif %}><a href="{% url 'list_lead' %}">Leads</a></li>
+
               {% url 'list_campaign' as list_campaign %}
               <li role="presentation" {% if request.path == list_campaign %} class="active"{% endif %}><a href="{% url 'list_campaign' %}">Campaign</a></li>
+
               {% url 'send_campaign' as send_campaign %}
               <li role="presentation" {% if request.path == send_campaign %} class="active"{% endif %}><a href="{% url 'send_campaign' %}">Send campaign</a></li>
+
+              {% url 'schedule_log' as schedule_log %}
+              <li role="presentation" {% if request.path == schedule_log %} class="active"{% endif %}><a href="{% url 'schedule_log' %}">Schedule Log</a></li>
             </ul>
         </div>
         {% endblock %}

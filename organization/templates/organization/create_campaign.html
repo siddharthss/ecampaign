@@ -79,6 +79,72 @@
                                     {{form.filter.errors}}
                                 </div>
 
+                                <div class="form-group">
+                                    <label name="" class="col-sm-2 control-label">Schedule Type</label>
+                                    <div class="col-sm-4">
+                                        <select name="schedule_type" class="form-control" id="schedule_type" placeholder=" " >
+                                            <option>Onetime</option>
+                                            <option>Repetitive</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="div_schedule_date">
+                                    <label id="schedule_date_label"name="" class="col-sm-2 control-label">Schedule Date</label>
+                                    <div class="col-sm-4">
+                                      <input id="schedule_date" name="schedule_date" type="date" class="form-control"  >
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="div_schedule_time">
+                                    <label id="schedule_time_label" name="schedule_time" class="col-sm-2 control-label">Schedule Time</label>
+                                    <div class="col-sm-4">
+                                      <input id="schedule_time" name="schedule_time" type="time" class="form-control"  >
+                                    </div>
+                                </div>
+                                <div class="form-group" id="div_minute" >
+                                    <label name="" class="col-sm-2 control-label">Minute</label>
+                                    <div class="col-sm-4">
+                                      <input name="minute" type="text"  class="form-control" value="*" >
+                                    </div>
+                                </div>
+                                <div class="form-group" id="div_hour">
+                                    <label name="" class="col-sm-2 control-label">Hour</label>
+                                    <div class="col-sm-4">
+                                      <input name="hour" type="text" class="form-control" value="*" >
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="div_day">
+                                    <label name="" class="col-sm-2 control-label">Day Of week</label>
+                                    <div class="col-sm-4">
+                                        <select name="day_of_week" class="form-control" placeholder=" ">
+                                            <option>*</option>
+                                            <option>sunday</option>
+                                            <option>monday</option>
+                                            <option>tuesday</option>
+                                            <option>wednesday</option>
+                                            <option>thursday</option>
+                                            <option>friday</option>
+                                            <option>saturday</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="div_date_of_month">
+                                    <label name="" class="col-sm-2 control-label">Day Of Month</label>
+                                    <div class="col-sm-4">
+                                      <input name="day_of_month" type="text"  class="form-control" value="*" >
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="div_month_of_year">
+                                    <label name="" class="col-sm-2 control-label">Month Of Year</label>
+                                    <div class="col-sm-4">
+                                      <input name="month_of_year" type="text" class="form-control" value="*" >
+                                    </div>
+                                </div>
+
                             <input class="btn btn-default" type="submit" name="submit" value="Create">
                             <input class="btn btn-default" type="reset">
                         </form>
@@ -86,6 +152,37 @@
               </div>
             </div>
         </div>
+       <script>
+           $(document).ready(function () {
+               toggleFields();
+               $("#schedule_type").change(function () {
+                    toggleFields();
+               });
+           });
 
+           function toggleFields() {
+           console.log("in toggle")
+               if ($("#schedule_type").val() == "Onetime")
+               {
+                    $("#div_schedule_date").show();
+                    $("#div_schedule_time").show();
+                    $("#div_minute").hide()
+                    $("#div_hour").hide()
+                    $("#div_day").hide()
+                    $("#div_date_of_month").hide()
+                    $("#div_month_of_year").hide()
+               }
+               else
+               {
+                    $("#div_schedule_date").hide();
+                    $("#div_schedule_time").hide();
+                    $("#div_minute").show()
+                    $("#div_hour").show()
+                    $("#div_day").show()
+                    $("#div_date_of_month").show()
+                    $("#div_month_of_year").show()
+               }
+            }
+       </script>
        {% endblock%}
 
