@@ -65,6 +65,7 @@ class LeadForm(ModelForm):
 
 
 class CampaignForm(ModelForm):
+
     class Meta:
         model = Campaign
         exclude = ["organization"]

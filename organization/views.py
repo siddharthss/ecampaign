@@ -3,6 +3,7 @@ import json
 import uuid
 from celery.schedules import crontab_parser
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage, send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
@@ -188,22 +189,18 @@ class CreateCampaignView(CreateView):
             date_object = datetime.strptime(date_iso, '%Y-%m-%dT%H:%M:%S')
             send_onetime_mail.apply_async((self.object, org), eta=date_object)
         elif schedule_type == "Repetitive":
-
-            cron = CrontabSchedule.objects.create(minute=cron_minute, hour=cron_hour,day_of_week=day_of_week,
-                                                  day_of_month=day_of_month, month_of_year=month_of_year,)
-
-            pargs = json.dumps([name,subject,content, orgpk])
-            periodic_task = PeriodicTask.objects.create(name=uuid.uuid4(),
+            cron = CrontabSchedule.objects.create()
+            pargs = json.dumps(["Test Mail 3", "Throgh app"])
+            periodic_task = PeriodicTask.objects.create(name="Run Campaign",
                                                         task="organization.tasks.send_repetitive_mail",
                                                         crontab=cron, args=pargs)
-
-            # cron = CrontabSchedule.objects.create()
-            # pargs = json.dumps(["Test Mail 3", "Throgh app"])
-            # periodic_task = PeriodicTask.objects.create(name="Run Campaign",
+            # cron = CrontabSchedule.objects.create(minute=cron_minute, hour=cron_hour,day_of_week=day_of_week,
+            #                                       day_of_month=day_of_month, month_of_year=month_of_year,)
+            #
+            # pargs = json.dumps([name, subject, content,  orgpk])
+            # periodic_task = PeriodicTask.objects.create(name=uuid.uuid4(),
             #                                             task="organization.tasks.send_repetitive_mail",
             #                                             crontab=cron, args=pargs)
-
-        # return super(CreateCampaignView, self).form_valid(form)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -261,8 +258,14 @@ class SendListLeadView(ListView):
     template_name = 'organization/send_list_lead.html'
 
     def get_queryset(self):
+        # cron = CrontabSchedule.objects.create()
+        # pargs = json.dumps(["Test Mail 3", "Through app"])
+        # periodic_task = PeriodicTask.objects.create(name="Run Campaign",
+        #                                             task="organization.tasks.send_repetitive_mail",
+        #                                             crontab=cron, args=pargs)
+        #
         org=Organization.objects.get(user=self.request.user)
-        queryset = Lead.objects.filter(organization=org)
+        queryset = Lead.objects.filter(organization=org)      
         return queryset
 
     def get_context_data(self, *args, **kwargs):

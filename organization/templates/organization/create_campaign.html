@@ -24,6 +24,7 @@
        {% endblock %}
 
        {% block content%}
+
         <div class="col-sm-9" style="margin:10px ">
             <div class="panel panel-default">
               <div class="panel-heading">Create Campaign</div>
@@ -80,6 +81,23 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label name="value" class="col-sm-2 control-label">value</label>
+                                    <div class="col-sm-4">
+                                      <input name="value" type="text" class="form-control"  placeholder="value" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label name="operator" class="col-sm-2 control-label">operator</label>
+                                    <div class="col-sm-4">
+                                        <select name="operator" class="form-control"  placeholder=" " >
+                                            <option>equal to</option>
+                                            <option>not equal to</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
                                     <label name="" class="col-sm-2 control-label">Schedule Type</label>
                                     <div class="col-sm-4">
                                         <select name="schedule_type" class="form-control" id="schedule_type" placeholder=" " >
@@ -92,26 +110,26 @@
                                 <div class="form-group" id="div_schedule_date">
                                     <label id="schedule_date_label"name="" class="col-sm-2 control-label">Schedule Date</label>
                                     <div class="col-sm-4">
-                                      <input id="schedule_date" name="schedule_date" type="date" class="form-control"  >
+                                      <input id="schedule_date" name="schedule_date" type="date" class="form-control" required >
                                     </div>
                                 </div>
 
                                 <div class="form-group" id="div_schedule_time">
                                     <label id="schedule_time_label" name="schedule_time" class="col-sm-2 control-label">Schedule Time</label>
                                     <div class="col-sm-4">
-                                      <input id="schedule_time" name="schedule_time" type="time" class="form-control"  >
+                                      <input id="schedule_time" name="schedule_time" type="time" class="form-control" required >
                                     </div>
                                 </div>
                                 <div class="form-group" id="div_minute" >
                                     <label name="" class="col-sm-2 control-label">Minute</label>
                                     <div class="col-sm-4">
-                                      <input name="minute" type="text"  class="form-control" value="*" >
+                                      <input name="minute" type="text"  class="form-control" value="*" required>
                                     </div>
                                 </div>
                                 <div class="form-group" id="div_hour">
                                     <label name="" class="col-sm-2 control-label">Hour</label>
                                     <div class="col-sm-4">
-                                      <input name="hour" type="text" class="form-control" value="*" >
+                                      <input name="hour" type="text" class="form-control" value="*" required>
                                     </div>
                                 </div>
 
@@ -134,14 +152,14 @@
                                 <div class="form-group" id="div_date_of_month">
                                     <label name="" class="col-sm-2 control-label">Day Of Month</label>
                                     <div class="col-sm-4">
-                                      <input name="day_of_month" type="text"  class="form-control" value="*" >
+                                      <input name="day_of_month" type="text"  class="form-control" value="*" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group" id="div_month_of_year">
                                     <label name="" class="col-sm-2 control-label">Month Of Year</label>
                                     <div class="col-sm-4">
-                                      <input name="month_of_year" type="text" class="form-control" value="*" >
+                                      <input name="month_of_year" type="text" class="form-control" value="*" required>
                                     </div>
                                 </div>
 
@@ -184,5 +202,15 @@
                }
             }
        </script>
+
+       <form id="user-location" method="post" action="#">
+          {%csrf_token%}
+          <label for="address">Enter Address or Zip Code:</label>
+          <input type="text" class="textbox" id="address" name="address" />
+          <button id="submit" type="submit" class="submit">Submit</button>
+       </form>
+
+        <!-- Contain the script binding the form submit event -->
+
        {% endblock%}
 
