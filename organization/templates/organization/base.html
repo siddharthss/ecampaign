@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,6 +23,23 @@
               padding: 40px 15px;
               text-align: center;
             }
+            .blog-footer {
+              padding: 40px 0;
+              color: #999;
+              text-align: center;
+              background-color: #f9f9f9;
+              border-top: 1px solid #e5e5e5;
+            }
+            .blog-footer p:last-child {
+              margin-bottom: 0;
+            }
+            .footer {
+              position: absolute;
+              bottom: 0;
+              width: 100%;
+              height: 60px;
+              background-color: #f5f5f5;
+            }
         </style>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -33,9 +49,8 @@
   </head>
 
   <body>
-
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
+      <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -54,33 +69,48 @@
       </div>
     </nav>
         {% block menu %}
-        <div class="col-md-2" style="margin:10px 20px">
-            <ul class="nav nav-pills  nav-stacked">
-              {% url 'list_lead' as list_lead %}
-              <li role="presentation" {% if request.path == list_lead %} class="active"{% endif %}><a href="{% url 'list_lead' %}">Leads</a></li>
+            <div class="col-md-2" style="margin:10px 20px">
+                <ul class="nav nav-pills  nav-stacked">
+                  {% url 'list_lead' as list_lead %}
+                  <li role="presentation" {% if request.path == list_lead %} class="active"{% endif %}><a href="{% url 'list_lead' %}">Leads</a></li>
 
-              {% url 'list_campaign' as list_campaign %}
-              <li role="presentation" {% if request.path == list_campaign %} class="active"{% endif %}><a href="{% url 'list_campaign' %}">Campaign</a></li>
+                  {% url 'list_campaign' as list_campaign %}
+                  <li role="presentation" {% if request.path == list_campaign %} class="active"{% endif %}><a href="{% url 'list_campaign' %}">Campaign</a></li>
 
-              {% url 'send_campaign' as send_campaign %}
-              <li role="presentation" {% if request.path == send_campaign %} class="active"{% endif %}><a href="{% url 'send_campaign' %}">Send campaign</a></li>
+                  {% url 'send_campaign' as send_campaign %}
+                  <li role="presentation" {% if request.path == send_campaign %} class="active"{% endif %}><a href="{% url 'send_campaign' %}">Send campaign</a></li>
 
-              {% url 'schedule_log' as schedule_log %}
-              <li role="presentation" {% if request.path == schedule_log %} class="active"{% endif %}><a href="{% url 'schedule_log' %}">Schedule Log</a></li>
-            </ul>
+                  {% url 'schedule_log' as schedule_log %}
+                  <li role="presentation" {% if request.path == schedule_log %} class="active"{% endif %}><a href="{% url 'schedule_log' %}">Schedule Log</a></li>
+                </ul>
+            </div>
         </div>
         {% endblock %}
 
     {% block content %}
+
     {% endblock %}
+        <footer class="blog-footer ">
+          <p>   template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+            <p>
+                <a href="#">Back to top</a>
+            </p>
+      </footer>
 
     <!-- Bootstrap core JavaScript================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <!--<script src="http://maps.google.com/maps/api/js?sensor=false"></script>-->
     <script type="text/javascript" src="{% static 'script.js' %}" ></script>
+    <script>
+           $(document).ready(function () {
+                    $("#checkAll").change(function () {
+                        $("input:checkbox").prop('checked', $(this).prop("checked"));
+                    });
+           });
+    </script>
 
   </body>
 </html>

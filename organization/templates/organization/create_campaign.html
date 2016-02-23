@@ -1,21 +1,5 @@
 {% extends "organization/base.html" %}
 
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-<style>
-#nav {
-    line-height:30px;
-    border-right: 2px solid black;
-    height:300px;
-    width:150px;
-    float:left;
-}
-</style>
-</head>
-<body>
        {% block nav %}
           <ul class="nav navbar-nav navbar-right">
             <li><a>Welcome,{{user.first_name}}</a></li>
@@ -24,20 +8,19 @@
        {% endblock %}
 
        {% block content%}
-
-        <div class="col-sm-9" style="margin:10px ">
+        <div class="col-sm-9" style="margin:10px 20px">
             <div class="panel panel-default">
               <div class="panel-heading">Create Campaign</div>
                   <div class="panel-body">
-                       <form class="form-horizontal" action="" method="post">
+                       <form class="form-horizontal" action=" " method="post">
                             {%csrf_token%}
                             {{ form.media }}
                                 <div class="form-group">
-                                    <label name={{form.campaign_name.name}} class="col-sm-2 control-label">Name</label>
+                                    <label name={{form.name.name}} class="col-sm-2 control-label">Name</label>
                                     <div class="col-sm-4">
-                                      <input name={{form.campaign_name.name}} type="text" class="form-control"  placeholder="name">
+                                      <input name={{form.name.name}} type="text" class="form-control"  placeholder="name">
                                     </div>
-                                    {{form.campaign_name.errors}}
+                                    {{form.name.errors}}
                                 </div>
 
                                 <div class="form-group">
@@ -73,28 +56,34 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label name={{form.filter.name}} class="col-sm-2 control-label">filter</label>
-                                    <div class="col-sm-4">
-                                      <input name={{form.filter.name}} type="text" class="form-control"  placeholder="filter">
-                                    </div>
-                                    {{form.filter.errors}}
-                                </div>
-
-                                <div class="form-group">
-                                    <label name="value" class="col-sm-2 control-label">value</label>
-                                    <div class="col-sm-4">
-                                      <input name="value" type="text" class="form-control"  placeholder="value" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label name="operator" class="col-sm-2 control-label">operator</label>
-                                    <div class="col-sm-4">
-                                        <select name="operator" class="form-control"  placeholder=" " >
-                                            <option>equal to</option>
-                                            <option>not equal to</option>
+                                    <label name=name class="col-sm-1 control-label">filter</label>
+                                    <div class="col-sm-3">
+                                        <select name="filter_name" class="form-control"  placeholder=" " >
+                                            <option>name</option>
+                                            <option>address</option>
+                                            <option>pin</option>
+                                            <option>email</option>
+                                            <option>country</option>
                                         </select>
                                     </div>
+
+                                    <label name="operator" class="col-sm-1 control-label">operator</label>
+                                    <div class="col-sm-3">
+                                        <select name="operator" class="form-control"  placeholder=" " >
+                                            <option value="icontains">having</option>
+                                            <option value="iexact">equal to</option>
+                                            <option value="lt">less than</option>
+                                            <option value="lte">less than equal to</option>
+                                            <option value="gt">greater than</option>
+                                            <option value="gte">greater than equal to</option>
+                                        </select>
+                                    </div>
+
+                                    <label name="value" class="col-sm-1 control-label">value</label>
+                                    <div class="col-sm-3">
+                                      <input name=value type="text" class="form-control"  placeholder="value" required>
+                                    </div>
+
                                 </div>
 
                                 <div class="form-group">
@@ -170,6 +159,9 @@
               </div>
             </div>
         </div>
+
+
+
        <script>
            $(document).ready(function () {
                toggleFields();
@@ -203,12 +195,13 @@
             }
        </script>
 
-       <form id="user-location" method="post" action="#">
-          {%csrf_token%}
-          <label for="address">Enter Address or Zip Code:</label>
-          <input type="text" class="textbox" id="address" name="address" />
-          <button id="submit" type="submit" class="submit">Submit</button>
-       </form>
+       <!--<form id="user-location" method="post" action="#">-->
+          <!--{%csrf_token%}-->
+          <!--<label for="address">Enter Address or Zip Code:</label>-->
+          <!--<input type="text" class="textbox" id="address" name="address" />-->
+          <!--<button id="submit" type="submit" class="submit">Submit</button>-->
+
+       <!--</form>-->
 
         <!-- Contain the script binding the form submit event -->
 

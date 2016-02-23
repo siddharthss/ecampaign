@@ -1,11 +1,4 @@
 {% extends "organization/base.html" %}
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
     {%block menu%}
     {%endblock%}
     {% block content %}
@@ -19,9 +12,9 @@
                             {%csrf_token%}
 
                             <div class="form-group">
-                                <label name={{form.organization_name.name}} class="col-md-4 control-label">Organization Name</label>
+                                <label name={{form.name.name}} class="col-md-4 control-label"> Name</label>
                                 <div class="col-md-8">
-                                    <input type="text" name={{form.organization_name.name}} class="form-control" placeholder="Organization Name">
+                                    <input type="text" name={{form.name.name}} class="form-control" placeholder="Organization Name">
                                     {{form.organization_name.errors}}
                                     </div>
                             </div>
@@ -99,8 +92,3 @@
         {% endif %}<br>
 
     {% endblock content %}
-
-
-</body>
-</html>
-

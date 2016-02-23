@@ -1,35 +1,42 @@
 from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
+from django_countries.fields import CountryField
 
 # Create your models here.
 
 
 class Organization(models.Model):
-    organization_name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User)
     address = models.CharField(max_length=200)
     pin = models.IntegerField()
-    user = models.ForeignKey(User)
-    domain_name = models.CharField(max_length=15, blank=True)
+    domain_name = models.CharField(max_length=15, blank=True, unique=True)
 
 
 class Lead(models.Model):
-    lead_name = models.CharField(max_length=100)
+    organization = models.ForeignKey(Organization)
+    name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     pin = models.IntegerField()
     email = models.EmailField()
-    country = models.CharField(max_length=100)
-    organization = models.ForeignKey(Organization)
+    country = CountryField()
+
+
+class Rule(models.Model):
+    source = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    operator = models.CharField(max_length=100)
 
 
 class Campaign(models.Model):
-    campaign_name = models.CharField(max_length=100)
+    organization = models.ForeignKey(Organization)
+    rule = models.ForeignKey(Rule)
+    name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
     subject = models.CharField(max_length=100)
     content = RichTextField()
-    filter = models.CharField(max_length=100)
-    organization = models.ForeignKey(Organization)
 
 
 class ScheduleLog(models.Model):

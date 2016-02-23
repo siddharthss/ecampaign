@@ -1,21 +1,4 @@
 {% extends "organization/base.html" %}
-
-
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-<style>
-#nav {
-    line-height:30px;
-    border-right: 2px solid black;
-    height:300px;
-    width:150px;
-    float:left;
-}
-</style>
-</head>
-<body>
        {% block nav %}
           <ul class="nav navbar-nav navbar-right">
             <li><a>Welcome,{{user.first_name}}</a></li>
@@ -24,7 +7,6 @@
        {% endblock %}
 
        {% block content %}
-
         <div class="col-sm-9" style="margin:10px ">
             <div class="panel panel-default">
               <div class="panel-heading">List of Leads</div>
@@ -32,6 +14,9 @@
                     <form action="{% url 'send' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="campaign_id" value="{{campaign_id}}" >
+                        <div class="col-sm-3 col-sm-offset-10">
+                        <label><input type="checkbox" id="checkAll"/> Check all</label>
+                        </div>
                         <table class="table table-striped">
                             <tr>
                                 <th>Name</th>
@@ -41,7 +26,7 @@
                             </tr>
                             {% for lead in object_list %}
                                 <tr>
-                                    <td>{{ lead.lead_name }}</td>
+                                    <td>{{ lead.name }}</td>
                                     <td>{{ lead.pin}}</td>
                                     <td>{{ lead.email}}</td>
                                     <td>
@@ -51,13 +36,14 @@
 
                             {%endfor %}
                         </table>
-                        <div class="col-lg-5 " style="margin:0px 730px">
+                        <div class="col-sm-5 col-sm-offset-10">
                             <input class="btn btn-default" type="submit" value="send">
                         </div>
                     </form>
                  </div>
             </div>
         </div>
+
         {{ form.non_field_errors }}
 
         {% if messages %}
@@ -75,7 +61,5 @@
 
             {% endfor %}
         {% endif %}
-
        {%endblock%}
-</body>
-</html>
+

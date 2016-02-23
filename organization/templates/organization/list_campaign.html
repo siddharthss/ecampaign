@@ -1,21 +1,5 @@
 {% extends "organization/base.html" %}
 
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-<style>
-#nav {
-    line-height:30px;
-    border-right: 2px solid black;
-    height:300px;
-    width:150px;
-    float:left;
-}
-</style>
-</head>
-<body>
        {% block nav %}
           <ul class="nav navbar-nav navbar-right">
             <li><a>Welcome,{{user.first_name}}</a></li>
@@ -47,13 +31,13 @@
                     </tr>
                     {% for campaign in object_list %}
                         <tr>
-                            <td>{{ campaign.campaign_name }}</td>
+                            <td>{{ campaign.name }}</td>
                             <td>{{ campaign.start_date }}</td>
                             <td>{{ campaign.end_date}}</td>
                             <td>{{ campaign.subject}}</td>
                             <td>{{ campaign.content|safe }}</td>
                             <td>{{ campaign.filter}}</td>
-                            <td>{{ campaign.organization.organization_name}}</td>
+                            <td>{{ campaign.organization.name}}</td>
                         </tr>
                     {%endfor %}
                 </table>
@@ -62,56 +46,3 @@
 
        {% endblock %}
 
-    <div>
-        <h4 align="right">Welcome,{{user.first_name}}</h4>
-        <h2>eCampaign</h2>
-        <div align="right">
-            <form action="{% url 'logout' %}" method="post" >
-                {% csrf_token %}
-                <input type="submit" value="Signout">
-            </form>
-        </div>
-        <hr >
-    </div>
-
-    <div id="nav">
-           <a href="{% url 'list_lead' %}">Leads</a>
-           <br>
-           <a href="{% url 'list_campaign' %}">Campaign</a>
-           <br>
-           <a href="{% url 'send_campaign' %}">Send campaign</a>
-    </div>
-
-
-    <center> <h4>List of Campaign</h4>
-    <div align="right" >
-        <a href="{% url 'create_campaign' %}">
-               <button>Create campaign</button>
-        </a>
-    </div>
-    <br>
-    <table border="1">
-        <tr>
-            <th>Name</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Subject</th>
-            <th>Content</th>
-            <th>Filter</th>
-            <th>Organization</th>
-        </tr>
-        {% for campaign in object_list %}
-            <tr>
-                <td>{{ campaign.campaign_name }}</td>
-                <td>{{ campaign.start_date }}</td>
-                <td>{{ campaign.end_date}}</td>
-                <td>{{ campaign.subject}}</td>
-                <td>{{ campaign.content|safe }}</td>
-                <td>{{ campaign.filter}}</td>
-                <td>{{ campaign.organization.organization_name}}</td>
-            </tr>
-        {%endfor %}
-    </table>
-    </center>
-</body>
-</html>

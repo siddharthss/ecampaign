@@ -1,21 +1,5 @@
 {% extends "organization/base.html" %}
 
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-<style>
-#nav {
-    line-height:30px;
-    border-right: 2px solid black;
-    height:300px;
-    width:150px;
-    float:left;
-}
-</style>
-</head>
-<body>
        {% block nav %}
           <ul class="nav navbar-nav navbar-right">
             <li><a>Welcome,{{user.first_name}}</a></li>
@@ -32,11 +16,11 @@
                             {%csrf_token%}
 
                                 <div class="form-group">
-                                    <label name={{form.lead_name.name}} class="col-sm-2 control-label">{{form.lead_name.name}}</label>
+                                    <label name={{form.name.name}} class="col-sm-2 control-label">{{form.name.name}}</label>
                                     <div class="col-sm-4">
-                                      <input name={{form.lead_name.name}} type="text" class="form-control"  placeholder="name">
+                                      <input name={{form.name.name}} type="text" class="form-control"  placeholder="name">
                                     </div>
-                                    {{form.lead_name.errors}}
+                                    {{form.name.errors}}
                                 </div>
 
                                 <div class="form-group">
@@ -66,7 +50,7 @@
                                 <div class="form-group">
                                     <label name={{form.country.name}} class="col-sm-2 control-label">{{form.country.name}}</label>
                                     <div class="col-sm-4">
-                                      <input name={{form.country.name}} type="text" class="form-control" placeholder="country">
+                                        {{form.country}}
                                     </div>
                                     {{form.country.errors}}
                                 </div>
@@ -79,5 +63,3 @@
             </div>
         </div>
         {% endblock%}
-</body>
-</html>

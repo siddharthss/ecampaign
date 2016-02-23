@@ -1,10 +1,8 @@
 from datetime import timedelta, datetime
 import json
-import uuid
-from celery.schedules import crontab_parser
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage, send_mail
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
@@ -20,16 +18,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib import messages
-from djcelery.schedulers import ModelEntry
 from .forms import OrganizationRegistrationForm, LeadForm, CampaignForm, SendListLeadForm
 from .forms import DomainForm
 from .forms import LoginForm
-import organization
-from organization.models import Organization, Lead, Campaign, ScheduleLog
-from organization.tasks import send_onetime_mail
-
-import dateutil.parser
-from djcelery.models import PeriodicTask, IntervalSchedule, CrontabSchedule
+from organization.models import Organization, Lead, Campaign, ScheduleLog, Rule
+from organization.tasks import send_onetime_mail, send_campaign
+from djcelery.models import PeriodicTask, CrontabSchedule
 
 
 class OrganizationRegistrationView(FormView):
@@ -38,22 +32,21 @@ class OrganizationRegistrationView(FormView):
     form_class = OrganizationRegistrationForm
 
     def form_valid(self, form):
-        first_name = self.request.POST['first_name']
-        last_name = self.request.POST['last_name']
-        email = self.request.POST['email']
-        password = self.request.POST['password']
-        organization_name = self.request.POST['organization_name']
-        address = self.request.POST['address']
-        pin = self.request.POST['pin']
+        first_name = form.cleaned_data.pop('first_name')
+        last_name = form.cleaned_data.pop('last_name')
+        email = form.cleaned_data.pop('email')
+        password = form.cleaned_data.pop('password')
+        name = form.cleaned_data.pop('name')
+        address = form.cleaned_data.pop('address')
+        pin = form.cleaned_data.pop('pin')
+
         user_object = User.objects.create_user(username=email, email=email, password=password,
                                                first_name=first_name, last_name=last_name,)
-        user_object.save()
         organization_object = Organization.objects.create(
-            organization_name=organization_name, address=address,
+            name=name, address=address,
             pin=pin, user=user_object
         )
         self.object = organization_object
-        organization_object.save()
         return super(OrganizationRegistrationView, self).form_valid(form)
 
     def get_success_url(self):
@@ -84,8 +77,8 @@ class LoginView(FormView):
         arr = host.split(".")
         host = arr[0]
         obj = get_object_or_404(Organization, domain_name=host)
-        username = self.request.POST['username']
-        password = self.request.POST['password'] 
+        username = form.cleaned_data.pop('username')
+        password = form.cleaned_data.pop('password')
         user = authenticate(username=username, password=password)
 
         if user == obj.user:
@@ -162,24 +155,28 @@ class CreateCampaignView(CreateView):
 
     def form_valid(self, form):
         form.instance.organization = Organization.objects.get(user=self.request.user)
+        source = self.request.POST['filter_name']
+        value = self.request.POST['value']
+        operator = self.request.POST['operator']
+
+        form.instance.rule = Rule.objects.create(source=source, value=value, operator=operator)
         schedule_type = self.request.POST["schedule_type"]
         schedule_date = self.request.POST["schedule_date"]
         schedule_time = self.request.POST["schedule_time"]
+        # cron_minute = crontab_parser(60).parse(self.request.POST["minute"])
+        # cron_hour = crontab_parser(24).parse(self.request.POST["hour"])
+        # day_of_week = crontab_parser(7).parse(self.request.POST["day_of_week"])
+        # day_of_month = crontab_parser(31, 1).parse(self.request.POST["day_of_month"])
+        # month_of_year = crontab_parser(12, 1).parse(self.request.POST["month_of_year"])
 
-        cron_minute = crontab_parser(60).parse(self.request.POST["minute"])
-        cron_hour = crontab_parser(24).parse(self.request.POST["hour"])
-        day_of_week = crontab_parser(7).parse(self.request.POST["day_of_week"])
-        day_of_month = crontab_parser(31, 1).parse(self.request.POST["day_of_month"])
-        month_of_year = crontab_parser(12, 1).parse(self.request.POST["month_of_year"])
-
-        expire_date = self.request.POST["end_date"]
-        name = self.request.POST['campaign_name']
-        subject = self.request.POST['subject']
-        content = self.request.POST['content']
-        filter = self.request.POST['filter']
+        expire_date = form.cleaned_data.pop("end_date")
+        name = form.cleaned_data.pop('name')
+        subject = form.cleaned_data.pop('subject')
+        content = form.cleaned_data.pop('content')
         org = form.instance.organization
-        orgpk = form.instance.organization.pk
+        # orgpk = form.instance.organization.pk
 
+        #override the form_valid()
         self.object = form.save()
 
         if schedule_type == "Onetime":
@@ -187,7 +184,7 @@ class CreateCampaignView(CreateView):
             date_iso = datetime.strptime(dt, '%Y-%m-%d%H:%M:%S')
             date_iso = date_iso.isoformat()
             date_object = datetime.strptime(date_iso, '%Y-%m-%dT%H:%M:%S')
-            send_onetime_mail.apply_async((self.object, org), eta=date_object)
+            send_onetime_mail.apply_async((self.object), eta=date_object)
         elif schedule_type == "Repetitive":
             cron = CrontabSchedule.objects.create()
             pargs = json.dumps(["Test Mail 3", "Throgh app"])
@@ -258,13 +255,7 @@ class SendListLeadView(ListView):
     template_name = 'organization/send_list_lead.html'
 
     def get_queryset(self):
-        # cron = CrontabSchedule.objects.create()
-        # pargs = json.dumps(["Test Mail 3", "Through app"])
-        # periodic_task = PeriodicTask.objects.create(name="Run Campaign",
-        #                                             task="organization.tasks.send_repetitive_mail",
-        #                                             crontab=cron, args=pargs)
-        #
-        org=Organization.objects.get(user=self.request.user)
+        org = Organization.objects.get(user=self.request.user)
         queryset = Lead.objects.filter(organization=org)      
         return queryset
 
@@ -287,14 +278,7 @@ class SendCampaignView(View):
             lead = request.POST.getlist('lead')
             queryset = Lead.objects.filter(pk__in=lead)
             campaign_object = Campaign.objects.get(id=campaign_id)
-            content = campaign_object.content
-            for obj in queryset:
-                msg = EmailMessage('Test mail', content, 'noreply@vertisinfotech.com', [obj.email])
-                msg.content_subtype = "html"
-                msg.send()
-                time = datetime.now()
-                log = ScheduleLog.objects.create(campaign=campaign_object, lead=obj, send_at=time)
-                log.save()
+            send_campaign.apply_async((queryset, campaign_object))
             messages.success(request, 'campaign is successfully send to leads')
         else:
             messages.error(request, 'Please select leads ')
@@ -304,6 +288,22 @@ class SendCampaignView(View):
 class ScheduleLogView(ListView):
     model = ScheduleLog
     template_name = 'organization/schedule_log.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(ScheduleLogView, self).get_context_data(**kwargs)
+        schedule_log_list = ScheduleLog.objects.all()
+        paginator = Paginator(schedule_log_list, self.paginate_by)
+        page = self.request.GET.get('page')
+        try:
+            file_schedule_log = paginator.page(page)
+        except PageNotAnInteger:
+            file_schedule_log = paginator.page(1)
+        except EmptyPage:
+            file_schedule_log = paginator.page(paginator.num_pages)
+        context['schedule_log_list'] = file_schedule_log
+        return context
+
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
