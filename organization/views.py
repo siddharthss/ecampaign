@@ -1,7 +1,4 @@
-from datetime import timedelta, datetime
-import json
 from django.conf import settings
-from django.core.mail import EmailMessage, send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
@@ -18,12 +15,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib import messages
-from .forms import OrganizationRegistrationForm, LeadForm, CampaignForm, SendListLeadForm
+from .forms import OrganizationRegistrationForm, LeadForm, SendListLeadForm, CreateCampaignForm
 from .forms import DomainForm
 from .forms import LoginForm
 from organization.models import Organization, Lead, Campaign, ScheduleLog, Rule
-from organization.tasks import send_onetime_mail, send_campaign
-from djcelery.models import PeriodicTask, CrontabSchedule
+from organization.tasks import send_campaign
 
 
 class OrganizationRegistrationView(FormView):
@@ -148,57 +144,17 @@ class CreateLeadView(CreateView):
         return super(CreateLeadView, self).dispatch(*args, **kwargs)
 
 
-class CreateCampaignView(CreateView):
-    model = Campaign
+class CreateCampaignView(FormView):
     template_name = 'organization/create_campaign.html'
-    form_class = CampaignForm
+    form_class = CreateCampaignForm
 
     def form_valid(self, form):
-        form.instance.organization = Organization.objects.get(user=self.request.user)
-        source = self.request.POST['filter_name']
-        value = self.request.POST['value']
-        operator = self.request.POST['operator']
-
-        form.instance.rule = Rule.objects.create(source=source, value=value, operator=operator)
-        schedule_type = self.request.POST["schedule_type"]
-        schedule_date = self.request.POST["schedule_date"]
-        schedule_time = self.request.POST["schedule_time"]
-        # cron_minute = crontab_parser(60).parse(self.request.POST["minute"])
-        # cron_hour = crontab_parser(24).parse(self.request.POST["hour"])
-        # day_of_week = crontab_parser(7).parse(self.request.POST["day_of_week"])
-        # day_of_month = crontab_parser(31, 1).parse(self.request.POST["day_of_month"])
-        # month_of_year = crontab_parser(12, 1).parse(self.request.POST["month_of_year"])
-
-        expire_date = form.cleaned_data.pop("end_date")
-        name = form.cleaned_data.pop('name')
-        subject = form.cleaned_data.pop('subject')
-        content = form.cleaned_data.pop('content')
-        org = form.instance.organization
-        # orgpk = form.instance.organization.pk
-
-        #override the form_valid()
-        self.object = form.save()
-
-        if schedule_type == "Onetime":
-            dt = schedule_date+schedule_time+':00'
-            date_iso = datetime.strptime(dt, '%Y-%m-%d%H:%M:%S')
-            date_iso = date_iso.isoformat()
-            date_object = datetime.strptime(date_iso, '%Y-%m-%dT%H:%M:%S')
-            send_onetime_mail.apply_async((self.object), eta=date_object)
-        elif schedule_type == "Repetitive":
-            cron = CrontabSchedule.objects.create()
-            pargs = json.dumps(["Test Mail 3", "Throgh app"])
-            periodic_task = PeriodicTask.objects.create(name="Run Campaign",
-                                                        task="organization.tasks.send_repetitive_mail",
-                                                        crontab=cron, args=pargs)
-            # cron = CrontabSchedule.objects.create(minute=cron_minute, hour=cron_hour,day_of_week=day_of_week,
-            #                                       day_of_month=day_of_month, month_of_year=month_of_year,)
-            #
-            # pargs = json.dumps([name, subject, content,  orgpk])
-            # periodic_task = PeriodicTask.objects.create(name=uuid.uuid4(),
-            #                                             task="organization.tasks.send_repetitive_mail",
-            #                                             crontab=cron, args=pargs)
+        self.object = form.save(self.request.user)
+        import ipdb;ipdb.set_trace()
         return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        import ipdb;ipdb.set_trace()
 
     def get_success_url(self):
         return reverse('dashboard_view')

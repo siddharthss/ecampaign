@@ -6,7 +6,15 @@
 </head>
 <body>
     <h1>demo</h1>
+    {% block nav %}
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'org_reg_form' %}"><span class="glyphicon glyphicon-log-out"></span> Sign Up</a></li>
+            <li><a href="{% url 'login_view' %}">Login</a></li>
+          </ul>
+    {% endblock %}
+
     {% block menu%}
+
     {%endblock%}
     {% block content %}
     <div class="container">

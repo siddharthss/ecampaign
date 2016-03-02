@@ -17,7 +17,8 @@ def send_campaign(queryset, campaign_object):
         ScheduleLog.objects.create(campaign=campaign_object, lead=obj, send_at=time)
 
 @app.task()
-def send_onetime_mail(campaign_object):
+def send_onetime_mail(campaign_object_id):
+    campaign_object = Campaign.objects.get(id=campaign_object_id)
     predicates = [(campaign_object.rule.source+'__'+campaign_object.rule.operator, campaign_object.rule.value)]
     q_list = [Q(x) for x in predicates]
     queryset = Lead.objects.filter(reduce(operator.and_, q_list))

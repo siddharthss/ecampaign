@@ -12,7 +12,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">Create Campaign</div>
                   <div class="panel-body">
-                       <form class="form-horizontal" action=" " method="post">
+                       <form id="campaign_form" class="form-horizontal" action=" " method="post">
                             {%csrf_token%}
                             {{ form.media }}
                                 <div class="form-group">
@@ -55,77 +55,150 @@
                                     {{form.subject.errors}}
                                 </div>
 
+                                <!--<div class="form-group">-->
+                                    <!--<label name=name class="col-sm-1 control-label">filter</label>-->
+                                    <!--<div class="col-sm-3">-->
+                                        <!--<select name="{{form.source.name}}" class="form-control"  placeholder=" " >-->
+                                            <!--<option>name</option>-->
+                                            <!--<option>address</option>-->
+                                            <!--<option>pin</option>-->
+                                            <!--<option>email</option>-->
+                                            <!--<option>country</option>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+                                    <!--{{form.source.errors}}-->
+                                    <!--<label name="operator" class="col-sm-1 control-label">operator</label>-->
+                                    <!--<div class="col-sm-3">-->
+                                        <!--<select name="{{form.operator.name}}" class="form-control"  placeholder=" " >-->
+                                            <!--<option value="icontains">having</option>-->
+                                            <!--<option value="iexact">equal to</option>-->
+                                            <!--<option value="lt">less than</option>-->
+                                            <!--<option value="lte">less than equal to</option>-->
+                                            <!--<option value="gt">greater than</option>-->
+                                            <!--<option value="gte">greater than equal to</option>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+                                    <!--{{form.operator.errors}}-->
+                                    <!--<label name="value" class="col-sm-1 control-label">value</label>-->
+                                    <!--<div class="col-sm-3">-->
+                                      <!--<input name={{form.value.name}} type="text" class="form-control"  placeholder="value" required>-->
+                                    <!--</div>-->
+                                    <!--{{form.value.errors}}-->
+
+                                <!--</div>-->
                                 <div class="form-group">
-                                    <label name=name class="col-sm-1 control-label">filter</label>
-                                    <div class="col-sm-3">
-                                        <select name="filter_name" class="form-control"  placeholder=" " >
+                                        <label class="col-xs-1 control-label">Rule</label>
+                                        <div class="col-xs-4">
+                                        <select name="{{form.source.name}}" class="form-control"  placeholder=" " >
                                             <option>name</option>
                                             <option>address</option>
                                             <option>pin</option>
                                             <option>email</option>
                                             <option>country</option>
                                         </select>
-                                    </div>
-
-                                    <label name="operator" class="col-sm-1 control-label">operator</label>
-                                    <div class="col-sm-3">
-                                        <select name="operator" class="form-control"  placeholder=" " >
-                                            <option value="icontains">having</option>
-                                            <option value="iexact">equal to</option>
-                                            <option value="lt">less than</option>
-                                            <option value="lte">less than equal to</option>
-                                            <option value="gt">greater than</option>
-                                            <option value="gte">greater than equal to</option>
-                                        </select>
-                                    </div>
-
-                                    <label name="value" class="col-sm-1 control-label">value</label>
-                                    <div class="col-sm-3">
-                                      <input name=value type="text" class="form-control"  placeholder="value" required>
-                                    </div>
-
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <select name="{{form.operator.name}}" class="form-control"  placeholder=" " >
+                                                <option value="icontains">having</option>
+                                                <option value="iexact">equal to</option>
+                                                <option value="lt">less than</option>
+                                                <option value="lte">less than equal to</option>
+                                                <option value="gt">greater than</option>
+                                                <option value="gte">greater than equal to</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-2">
+                                          <input name={{form.value.name}} type="text" class="form-control"  placeholder="value" required>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <button type="button" class="btn btn-default addButton">
+                                                <i class="fa fa-plus">
+                                                    <span class="glyphicon glyphicon-plus" aria-hidden="true">
+                                                    </span>
+                                                </i>
+                                            </button>
+                                        </div>
                                 </div>
 
+                               <!-- The template for adding new field -->
+                                <div class="form-group hide" id="bookTemplate">
+                                    <div class="col-xs-4 col-xs-offset-1">
+                                        <select name="{{form.source.name}}" class="form-control"  placeholder=" " >
+                                            <option>name</option>
+                                            <option>address</option>
+                                            <option>pin</option>
+                                            <option>email</option>
+                                            <option>country</option>
+                                        </select>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <select name="{{form.operator.name}}" class="form-control"  placeholder=" ">
+                                                <option value="icontains">having</option>
+                                                <option value="iexact">equal to</option>
+                                                <option value="lt">less than</option>
+                                                <option value="lte">less than equal to</option>
+                                                <option value="gt">greater than</option>
+                                                <option value="gte">greater than equal to</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-2">
+                                          <input name={{form.value.name}}[] type="text" class="form-control"  placeholder="value">
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <button type="button" class="btn btn-default removeButton">
+                                                <i class="fa fa-plus">
+                                                    <span class="glyphicon glyphicon-minus" aria-hidden="true">
+                                                    </span>
+                                                </i>
+                                            </button>
+                                        </div>
+                                </div>
                                 <div class="form-group">
                                     <label name="" class="col-sm-2 control-label">Schedule Type</label>
                                     <div class="col-sm-4">
-                                        <select name="schedule_type" class="form-control" id="schedule_type" placeholder=" " >
+                                        <select name={{form.schedule_type.name}} class="form-control" id="schedule_type" placeholder=" " >
                                             <option>Onetime</option>
                                             <option>Repetitive</option>
                                         </select>
                                     </div>
+                                    {{form.schedule_type.errors}}
+
                                 </div>
 
                                 <div class="form-group" id="div_schedule_date">
                                     <label id="schedule_date_label"name="" class="col-sm-2 control-label">Schedule Date</label>
                                     <div class="col-sm-4">
-                                      <input id="schedule_date" name="schedule_date" type="date" class="form-control" required >
+                                      <input id="schedule_date" name={{form.schedule_date.name}} type="date" class="form-control" required >
                                     </div>
+                                    {{form.schedule_date.errors}}
                                 </div>
 
                                 <div class="form-group" id="div_schedule_time">
                                     <label id="schedule_time_label" name="schedule_time" class="col-sm-2 control-label">Schedule Time</label>
                                     <div class="col-sm-4">
-                                      <input id="schedule_time" name="schedule_time" type="time" class="form-control" required >
+                                      <input id="schedule_time" name="{{form.schedule_time.name}}" type="time" class="form-control" required >
                                     </div>
+                                    {{form.schedule_time.errors}}
                                 </div>
                                 <div class="form-group" id="div_minute" >
                                     <label name="" class="col-sm-2 control-label">Minute</label>
                                     <div class="col-sm-4">
-                                      <input name="minute" type="text"  class="form-control" value="*" required>
+                                      <input name={{form.minute.name}} type="text"  class="form-control" value="*" required>
                                     </div>
+                                    {{form.minute.errors}}
                                 </div>
                                 <div class="form-group" id="div_hour">
                                     <label name="" class="col-sm-2 control-label">Hour</label>
                                     <div class="col-sm-4">
-                                      <input name="hour" type="text" class="form-control" value="*" required>
+                                      <input name={{form.hour.name}} type="text" class="form-control" value="*" required>
                                     </div>
+                                    {{form.hour.errors}}
                                 </div>
 
                                 <div class="form-group" id="div_day">
                                     <label name="" class="col-sm-2 control-label">Day Of week</label>
                                     <div class="col-sm-4">
-                                        <select name="day_of_week" class="form-control" placeholder=" ">
+                                        <select name={{form.day_of_week.name}} class="form-control" placeholder=" ">
                                             <option>*</option>
                                             <option>sunday</option>
                                             <option>monday</option>
@@ -136,20 +209,23 @@
                                             <option>saturday</option>
                                         </select>
                                     </div>
+                                    {{form.day_of_week.errors}}
                                 </div>
 
                                 <div class="form-group" id="div_date_of_month">
-                                    <label name="" class="col-sm-2 control-label">Day Of Month</label>
+                                    <label name={{form.day_of_month.name}} class="col-sm-2 control-label">Day Of Month</label>
                                     <div class="col-sm-4">
                                       <input name="day_of_month" type="text"  class="form-control" value="*" required>
                                     </div>
+                                    {{form.day_of_month.errors}}
                                 </div>
 
                                 <div class="form-group" id="div_month_of_year">
                                     <label name="" class="col-sm-2 control-label">Month Of Year</label>
                                     <div class="col-sm-4">
-                                      <input name="month_of_year" type="text" class="form-control" value="*" required>
+                                      <input name={{form.month_of_year.name}} type="text" class="form-control" value="*" required>
                                     </div>
+                                    {{form.month_of_year.errors}}
                                 </div>
 
                             <input class="btn btn-default" type="submit" name="submit" value="Create">
@@ -161,7 +237,6 @@
         </div>
 
 
-
        <script>
            $(document).ready(function () {
                toggleFields();
@@ -171,7 +246,6 @@
            });
 
            function toggleFields() {
-           console.log("in toggle")
                if ($("#schedule_type").val() == "Onetime")
                {
                     $("#div_schedule_date").show();
@@ -193,8 +267,29 @@
                     $("#div_month_of_year").show()
                }
             }
-       </script>
 
+            bookIndex=0;
+            $('#campaign_form')
+            .on('click', '.addButton', function() {
+            bookIndex++;
+            var $template = $('#bookTemplate'),
+                $clone    = $template
+                                .clone()
+                                .removeClass('hide')
+                                .removeAttr('id')
+                                .attr('data-book-index', bookIndex)
+                                .insertBefore($template);
+        })
+
+        // Remove button click handler
+        .on('click', '.removeButton', function() {
+            var $row  = $(this).parents('.form-group'),
+                index = $row.attr('data-book-index');
+            // Remove element containing the fields
+            $row.remove();
+        });
+
+       </script>
        <!--<form id="user-location" method="post" action="#">-->
           <!--{%csrf_token%}-->
           <!--<label for="address">Enter Address or Zip Code:</label>-->
@@ -205,5 +300,5 @@
 
         <!-- Contain the script binding the form submit event -->
 
-       {% endblock%}
+        {% endblock%}
 
