@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
-from organization.views import DemoView
+from organization.views import DemoView, TestView
 from organization.views import LoginView
 from organization.views import DashboardView
 
@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name='login_view'),
     url(r'^dashboard/$', DashboardView.as_view(), name='dashboard_view'),
     url(r'^schedule/', include('schedule.urls')),
+    url(r'^demo/$', TestView.as_view(), name='demo_view'),
 ]

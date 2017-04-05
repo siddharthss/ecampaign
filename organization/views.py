@@ -19,7 +19,8 @@ from .forms import OrganizationRegistrationForm, LeadForm, SendListLeadForm, Cre
 from .forms import DomainForm
 from .forms import LoginForm
 from organization.models import Organization, Lead, Campaign, ScheduleLog, Rule
-from organization.tasks import send_campaign
+from organization.tasks import send_campaign, demo_task
+from django.http import HttpResponse
 
 
 class OrganizationRegistrationView(FormView):
@@ -150,11 +151,7 @@ class CreateCampaignView(FormView):
 
     def form_valid(self, form):
         self.object = form.save(self.request.user)
-        import ipdb;ipdb.set_trace()
         return HttpResponseRedirect(self.get_success_url())
-
-    def form_invalid(self, form):
-        import ipdb;ipdb.set_trace()
 
     def get_success_url(self):
         return reverse('dashboard_view')
@@ -264,3 +261,10 @@ class ScheduleLogView(ListView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ScheduleLogView, self).dispatch(*args, **kwargs)
+
+
+class TestView(View):
+
+    def get(self,request):
+        demo_task.apply_async()
+        return HttpResponse("success")

@@ -1,5 +1,4 @@
 from collections import OrderedDict
-from ckeditor.fields import RichTextField
 import datetime
 from django import forms
 from django.contrib.auth.models import User
@@ -76,7 +75,7 @@ class CampaignForm(ModelForm):
 
     class Meta:
         model = Campaign
-        exclude = ["organization","rule"]
+        exclude = ["organization", "rule"]
         widgets = {
             'content': CKEditorWidget,
             'start_date': SelectDateWidget,
@@ -95,13 +94,15 @@ class RuleForm(forms.Form):
     operator = forms.ChoiceField(widget=forms.Select(), choices=OPERATOR_CHOICES, required=True)
     value = forms.CharField(max_length=100)
 
+# RuleFormset = forms.formset_factory(RuleForm)
+
 
 class CreateCampaignForm(forms.Form):
-    SOURCE_CHOICES = (('name', 'name'), ('address', 'address'), ('pin', 'pin'),
-                      ('email', 'email'), ('country', 'country'))
-
-    OPERATOR_CHOICES = (('icontains', 'icontains'), ('iexact', 'iexact'), ('lt', 'lt'),
-                        ('lte', 'lte'), ('gt', 'gt'), ('gte', 'gte'))
+    # SOURCE_CHOICES = (('name', 'name'), ('address', 'address'), ('pin', 'pin'),
+    #                   ('email', 'email'), ('country', 'country'))
+    #
+    # OPERATOR_CHOICES = (('icontains', 'icontains'), ('iexact', 'iexact'), ('lt', 'lt'),
+    #                     ('lte', 'lte'), ('gt', 'gt'), ('gte', 'gte'))
 
     SCHEDULE_TYPE_CHOICES = [('Onetime', 'Onetime'), ('Repetitive', 'Repetitive')]
 
@@ -113,10 +114,9 @@ class CreateCampaignForm(forms.Form):
     end_date = forms.DateField()
     subject = forms.CharField(max_length=100)
     content = forms.CharField(widget=CKEditorWidget())
-
-    source = forms.ChoiceField(choices=SOURCE_CHOICES, required=True)
-    operator = forms.ChoiceField(widget=forms.Select(), choices=OPERATOR_CHOICES, required=True)
-    value = forms.CharField(max_length=100)
+    # source = forms.ChoiceField(choices=SOURCE_CHOICES, required=True)
+    # operator = forms.ChoiceField(widget=forms.Select(), choices=OPERATOR_CHOICES, required=True)
+    # value = forms.CharField(max_length=100)
 
     schedule_type = forms.ChoiceField(widget=forms.Select(), choices=SCHEDULE_TYPE_CHOICES, initial='3', required=True,)
     schedule_date = forms.DateTimeField()
@@ -128,15 +128,23 @@ class CreateCampaignForm(forms.Form):
     day_of_month = forms.CharField(max_length=10)
     month_of_year = forms.CharField(max_length=10)
 
+    # def is_valid(self):
+    #     import ipdb;ipdb.set_trace()
+    #     valid = super(CreateCampaignForm, self).is_valid()
+    #     source = self.data.getlist('source[]')
+    #     operator = self.data.getlist('operator[]')
+    #     value = self.data.getlist('value[]')
+    #     for src, op, val in zip(source, operator, value):
+    #         rule_form = RuleForm(src, op, val)
+    #         if rule_form.is_valid():
+    #             valid = True
+    #             rule_form.save()
+    #         else:
+    #             valid = False
+    #     return valid
+
     @transaction.atomic
     def save(self, user, commit=True):
-        rule_data = dict(
-            source=self.cleaned_data.pop('source'),
-            value=self.cleaned_data.pop('value'),
-            operator=self.cleaned_data.pop('operator')
-        )
-        rule = Rule.objects.create(**rule_data)
-
         schedule_data = dict(
             schedule_type=self.cleaned_data.pop('schedule_type'),
             schedule_date=self.cleaned_data.pop('schedule_date'),
@@ -144,7 +152,6 @@ class CreateCampaignForm(forms.Form):
         )
         campaign_data = dict(
             organization=Organization.objects.get(user=user),
-            rule=rule,
             name=self.cleaned_data.pop('name'),
             start_date=self.cleaned_data.pop('start_date'),
             end_date=self.cleaned_data.pop('end_date'),
@@ -152,6 +159,13 @@ class CreateCampaignForm(forms.Form):
             content=self.cleaned_data.pop('content'),
         )
         camp_obj = Campaign.objects.create(**campaign_data)
+
+        source = self.data.getlist('source[]')
+        operator = self.data.getlist('operator[]')
+        value = self.data.getlist('value[]')
+        for src, op, val in zip(source, operator, value):
+            Rule.objects.create(campaign=camp_obj, source=src, operator=op, value=val)
+
         self.run_campaign(schedule_data, camp_obj)
 
     def run_campaign(self, sdata, camp_object):

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="476458493">
+    <data-source source="LOCAL" name="Django default" uuid="d3732678-e058-4493-8f27-58420cf4f6d9">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://127.0.0.1/ecampaign</jdbc-url>
+      <user-name>ecampaign</user-name>
+      <user-password>dfcfdfc9dfcbdfc7dfdadfcbdfc3dfcddfc4</user-password>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+

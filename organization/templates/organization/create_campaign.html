@@ -89,7 +89,7 @@
                                 <div class="form-group">
                                         <label class="col-xs-1 control-label">Rule</label>
                                         <div class="col-xs-4">
-                                        <select name="{{form.source.name}}" class="form-control"  placeholder=" " >
+                                        <select name="source[]" class="form-control"  placeholder=" " >
                                             <option>name</option>
                                             <option>address</option>
                                             <option>pin</option>
@@ -98,7 +98,7 @@
                                         </select>
                                         </div>
                                         <div class="col-xs-4">
-                                            <select name="{{form.operator.name}}" class="form-control"  placeholder=" " >
+                                            <select name="operator[]" class="form-control"  placeholder=" " >
                                                 <option value="icontains">having</option>
                                                 <option value="iexact">equal to</option>
                                                 <option value="lt">less than</option>
@@ -108,7 +108,7 @@
                                             </select>
                                         </div>
                                         <div class="col-xs-2">
-                                          <input name={{form.value.name}} type="text" class="form-control"  placeholder="value" required>
+                                          <input name="value[]" type="text" class="form-control"  placeholder="value" required>
                                         </div>
                                         <div class="col-xs-1">
                                             <button type="button" class="btn btn-default addButton">
@@ -123,7 +123,7 @@
                                <!-- The template for adding new field -->
                                 <div class="form-group hide" id="bookTemplate">
                                     <div class="col-xs-4 col-xs-offset-1">
-                                        <select name="{{form.source.name}}" class="form-control"  placeholder=" " >
+                                        <select id="1" name="source[]" class="form-control"  placeholder=" " >
                                             <option>name</option>
                                             <option>address</option>
                                             <option>pin</option>
@@ -132,7 +132,7 @@
                                         </select>
                                         </div>
                                         <div class="col-xs-4">
-                                            <select name="{{form.operator.name}}" class="form-control"  placeholder=" ">
+                                            <select id="2"name="operator[]" class="form-control"  placeholder=" ">
                                                 <option value="icontains">having</option>
                                                 <option value="iexact">equal to</option>
                                                 <option value="lt">less than</option>
@@ -142,7 +142,7 @@
                                             </select>
                                         </div>
                                         <div class="col-xs-2">
-                                          <input name={{form.value.name}}[] type="text" class="form-control"  placeholder="value">
+                                          <input id="3" name="value[]" type="text" class="form-control"  placeholder="value">
                                         </div>
                                         <div class="col-xs-1">
                                             <button type="button" class="btn btn-default removeButton">
@@ -279,6 +279,9 @@
                                 .removeAttr('id')
                                 .attr('data-book-index', bookIndex)
                                 .insertBefore($template);
+                $('#1').removeAttr('id');
+                $('#2').removeAttr('id');
+                $('#3').removeAttr('id');
         })
 
         // Remove button click handler
@@ -287,6 +290,12 @@
                 index = $row.attr('data-book-index');
             // Remove element containing the fields
             $row.remove();
+        })
+        .submit(function() {
+            $("#1").remove(); //removing field 1 from query
+            $("#2").remove();
+            $("#3").remove();
+            return true; //send
         });
 
        </script>

@@ -26,7 +26,6 @@
                         <th>End Date</th>
                         <th>Subject</th>
                         <th>Content</th>
-                        <th>Filter</th>
                         <th>Organization</th>
                     </tr>
                     {% for campaign in object_list %}
@@ -36,7 +35,6 @@
                             <td>{{ campaign.end_date}}</td>
                             <td>{{ campaign.subject}}</td>
                             <td>{{ campaign.content|safe }}</td>
-                            <td>{{ campaign.filter}}</td>
                             <td>{{ campaign.organization.name}}</td>
                         </tr>
                     {%endfor %}

@@ -13,6 +13,9 @@ class Organization(models.Model):
     pin = models.IntegerField()
     domain_name = models.CharField(max_length=15, blank=True, unique=True)
 
+    def __unicode__(self):
+        return self.name
+
 
 class Lead(models.Model):
     organization = models.ForeignKey(Organization)
@@ -22,25 +25,37 @@ class Lead(models.Model):
     email = models.EmailField()
     country = CountryField()
 
-
-class Rule(models.Model):
-    source = models.CharField(max_length=100)
-    value = models.CharField(max_length=100)
-    operator = models.CharField(max_length=100)
+    def __unicode__(self):
+        return self.name
 
 
 class Campaign(models.Model):
     organization = models.ForeignKey(Organization)
-    rule = models.ForeignKey(Rule)
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
     subject = models.CharField(max_length=100)
     content = RichTextField()
 
+    def __unicode__(self):
+        return self.name
+
+
+class Rule(models.Model):
+    campaign = models.ForeignKey(Campaign)
+    source = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    operator = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return '%s on %s' % (self.source, self.campaign)
+
 
 class ScheduleLog(models.Model):
     campaign = models.ForeignKey(Campaign)
     lead = models.ForeignKey(Lead)
     send_at = models.DateTimeField()
+
+    def __unicode__(self):
+        return '%s TO %s AT' % (self.campaign, self.lead, self.send_at)
 
